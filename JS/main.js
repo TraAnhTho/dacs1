@@ -397,16 +397,48 @@ function editTodo(todoDiv, newTodo) {
     const updatedText = editInput.value; // Lấy nội dung mới
 
     if (updatedText) {
+      const oldText = newTodo.innerText; // Lấy nội dung cũ để cập nhật localStorage
       newTodo.innerText = updatedText; // Cập nhật nội dung trên giao diện
       todoDiv.replaceChild(newTodo, editInput); // Trả lại thẻ <li> sau khi chỉnh sửa
       todoDiv.removeChild(saveButton); // Xóa nút Save sau khi hoàn thành
 
-      // Cập nhật lại localStorage
-      updateLocalTodoText(newTodo.innerText, updatedText);
+      // Cập nhật lại localStorage với nội dung mới
+      updateLocalTodoText(oldText, updatedText);
     } else {
       alert("Nội dung không được để trống!");
     }
   });
+
+  // input.addEventListener("blur", () => {
+  //   // Khi mất focus
+  //   saveEdit(input.value, todoDiv); // Lưu thay đổi
+  // });
+
+  // input.addEventListener("keypress", function (e) {
+  //   // Hoặc nhấn Enter
+  //   if (e.key === "Enter") {
+  //     saveEdit(input.value, todoDiv); // Lưu thay đổi
+  //   }
+  // });
+}
+
+function saveEdit(updatedText, todoDiv) {
+  const todos = JSON.parse(localStorage.getItem("todos")) || [];
+  const todoIndex = Array.from(todoList.children).indexOf(todoDiv); // Lấy vị trí to-do trong danh sách
+
+  // Cập nhật nội dung mới cho to-do tương ứng
+  todos[todoIndex].text = updatedText;
+
+  // Cập nhật localStorage với thông tin mới
+  localStorage.setItem("todos", JSON.stringify(todos));
+
+  // Cập nhật lại giao diện
+  const newTodo = document.createElement("li");
+  newTodo.innerText = updatedText;
+  newTodo.classList.add("todo-item");
+
+  // Thay input bằng nội dung mới
+  todoDiv.replaceChild(newTodo, todoDiv.querySelector(".edit-input"));
 }
 function updateLocalTodoText(oldText, newText) {
   let todos = JSON.parse(localStorage.getItem("todos")) || [];
@@ -417,7 +449,7 @@ function updateLocalTodoText(oldText, newText) {
     }
   });
 
-  localStorage.setItem("todos", JSON.stringify(todos));
+  localStorage.setItem("todos", JSON.stringify(todos)); // Lưu lại localStorage
 }
 
 // Thêm sự kiện cho các nút màu
