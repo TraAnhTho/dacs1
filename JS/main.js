@@ -23,6 +23,12 @@ function addTodo(event) {
   console.log(todoInput.value);
   console.log(newTodo);
 
+  const todoText = todoInput.value.trim(); // Loại bỏ khoảng trắng
+  if (todoText === "") {
+    alert("Mời nhập thông tin");
+    return; // Ngăn lưu to-do trống
+  }
+
   if (todoInput.value != "") {
     console.log("chay if");
     newTodo.classList.add("todo-item");
@@ -65,6 +71,18 @@ function addTodo(event) {
       ":" +
       (seconds < 10 ? "0" : "") +
       seconds;
+
+    const todoData = {
+      text: todoText,
+      time: formattedTime,
+      color: "white",
+      completed: false,
+    };
+
+    saveLocalTodos(todoData); // Lưu dữ liệu vào localStorage
+
+    // Tạo và hiển thị các phần tử khác cho to-do (nút trạng thái, thời gian, v.v.)
+    createStatusButtons(todoDiv, todoText);
 
     // Tạo phần tử hiển thị thời gian và ngày tháng
     const timeSpan = document.createElement("span");
@@ -179,6 +197,8 @@ function deleteCheck(e) {
 }
 
 function saveLocalTodos(todo) {
+  if (todo.text.trim() === "") return; // Ngăn lưu nếu nội dung trống
+
   let todos = JSON.parse(localStorage.getItem("todos")) || [];
 
   // Tìm xem to-do này đã có trong danh sách chưa (dựa trên text)
@@ -394,7 +414,8 @@ function editTodo(todoDiv, newTodo) {
 
   // Khi người dùng nhấn Save
   saveButton.addEventListener("click", () => {
-    const updatedText = editInput.value; // Lấy nội dung mới
+    const updatedText = editInput.value.trim(); // Lấy nội dung mới và loại bỏ khoảng trắng thừa
+    // const updatedText = editInput.value; // Lấy nội dung mới
 
     if (updatedText) {
       const oldText = newTodo.innerText; // Lấy nội dung cũ để cập nhật localStorage
